@@ -25,7 +25,7 @@ class FrameProcessor:
             return Hands.NONE
 
         landmarks = np.array(list(chain.from_iterable([
-            [landmark.x, landmark.y] 
+            [landmark.x, landmark.y, landmark.z] 
             for landmark in processed.multi_hand_landmarks[0].landmark
         ])))
         

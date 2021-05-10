@@ -1,5 +1,5 @@
 from itertools import chain
-
+from frame_processor import F
 import cv2
 import json
 import mediapipe as mp
@@ -17,7 +17,7 @@ def process_frame(frame: np.ndarray):
 
 def postprocess_frame(processed):
     landmarks = [
-        [landmark.x, landmark.y] 
+        [landmark.x, landmark.y, landmark.z] 
         for landmark in processed.multi_hand_landmarks[0].landmark
     ]
     return np.array(list(chain.from_iterable(landmarks)))
