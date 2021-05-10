@@ -44,7 +44,7 @@ class NaoController:
         self.robot.play_motion(self.response_mapping[label])
 
 
-controller = NaoController(config["logistic_regression_path"], RESPONSE_MAPPING)
+controller = NaoController(config["sgd_classifier_path"], RESPONSE_MAPPING)
 
 while controller.step() != -1:
     controller.on_frame()
