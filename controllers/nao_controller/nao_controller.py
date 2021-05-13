@@ -1,9 +1,7 @@
 from nao import Nao
 from nao_moves import NaoMoves
 from camera_controller import CameraController
-from frame_processor import FrameProcessor, Hands
 from threading import Thread
-from hands_classifier import HandsClassifier
 
 import json
 import pickle
