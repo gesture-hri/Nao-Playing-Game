@@ -3,25 +3,34 @@ from nao_moves import NaoMoves
 from camera_controller import CameraController
 from frame_processor import FrameProcessor, Hands
 from threading import Thread
+from hands_classifier import HandsClassifier
 
 import json
+import pickle
+import numpy as np
+import sys
+import os
 
 config = json.load(open("cfg.json"))
+sys.path.insert(0, os.path.abspath(config['preprocessor_class_path']))
+
 
 RESPONSE_MAPPING = {
-    Hands.ROCK: NaoMoves.RIGHT_HAND_PAPER,
-    Hands.PAPER: NaoMoves.RIGHT_HAND_SCISSORS,
-    Hands.SCISSORS: NaoMoves.RIGHT_HAND_ROCK,
-    Hands.NONE: NaoMoves.STAND_STILL
+    0: NaoMoves.RIGHT_HAND_PAPER,
+    1: NaoMoves.RIGHT_HAND_SCISSORS,
+    2: NaoMoves.RIGHT_HAND_ROCK,
+    None: NaoMoves.STAND_STILL
 }
 
 
 class NaoController:
-    def __init__(self, classifier_path, response_mapping):
+    def __init__(self, classifier_path, preprocessor_path, response_mapping):
         self.response_mapping = response_mapping
         self.robot = Nao()
         self.camera_controller = CameraController()
-        self.frame_processor = FrameProcessor(classifier_path)
+
+        self.frame_preprocessor = pickle.load(open(preprocessor_path, 'rb'))
+        self.classifier = pickle.load(open(classifier_path, 'rb'))
         
         self._flusher = Thread(target=self._flush, daemon=True)
         self._flusher.start()
@@ -40,11 +49,12 @@ class NaoController:
         frame = self.camera_controller.get_frame()
         if self.robot.is_moving():
             return
-        label = self.frame_processor.process_frame(frame)
+        processed = self.frame_preprocessor.preprocess(frame)
+        label = self.classifier.predict(np.array([processed]))[0] if processed is not None else None
         self.robot.play_motion(self.response_mapping[label])
 
 
-controller = NaoController(config["sgd_classifier_path"], RESPONSE_MAPPING)
+controller = NaoController(config["classifier_path"], config['preprocessor_file_path'], RESPONSE_MAPPING)
 
 while controller.step() != -1:
     controller.on_frame()

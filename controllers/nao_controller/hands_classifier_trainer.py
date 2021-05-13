@@ -1,5 +1,6 @@
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 import numpy as np
 import pickle
@@ -32,5 +33,12 @@ model.fit(X_train, y_train)
 print("INFO: sgd classifier test set accuracy: " + str(model.score(X_test, y_test)))
 
 with open(config["sgd_classifier_path"], "w+b") as f:
+    pickle.dump(model, f)
+
+model = KNeighborsClassifier()
+model.fit(X_train, y_train)
+print("INFO: knn classifier test set accuracy: " + str(model.score(X_test, y_test)))
+
+with open(config["knn_classifier_path"], "w+b") as f:
     pickle.dump(model, f)
 
