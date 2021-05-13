@@ -1,5 +1,5 @@
 {
-    "preprocessor_class_path": "",
-    "preprocessor_file_path": "",
-    "classifier_file_path": ""
+    "preprocessor_class_path": "<hands-Classifier repo path>",
+    "preprocessor_file_path": "<path to preprocessor object pickled by build_preprocessor.py script>",
+    "classifier_path": "<path to one of the classifiers build by build_models.py script>"
 }
